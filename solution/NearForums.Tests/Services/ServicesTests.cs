@@ -10,7 +10,7 @@ using NearForums.Configuration;
 namespace NearForums.Tests
 {
 	[TestClass]
-	public class ServicesTests
+	public class ServicesTests : BaseNearforumTest
 	{
 		private TestContext testContextInstance;
 
@@ -62,7 +62,8 @@ namespace NearForums.Tests
 
 			var userService = TestHelper.Resolve<IUsersService>();
 
-			userService.Add(user, AuthenticationProvider.Twitter, providerId);
+            NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(
+                userService.Add(user, AuthenticationProvider.Twitter, providerId));
 
 			user = userService.GetByProviderId(AuthenticationProvider.Twitter, providerId);
 			Assert.IsTrue(user.Id > 0);
@@ -85,8 +86,9 @@ namespace NearForums.Tests
 			user.Website = "http://twitter.com/jorgebg/";
 
 			providerId = "00" + new Random().Next(int.MaxValue / 2, int.MaxValue).ToString();
-
-			userService.Add(user, AuthenticationProvider.Twitter, providerId);
+;
+            NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(
+                userService.Add(user, AuthenticationProvider.Twitter, providerId));
 
 			user = userService.GetByProviderId(AuthenticationProvider.Twitter, providerId);
 			Assert.IsTrue(user.Id > 0);
@@ -101,9 +103,9 @@ namespace NearForums.Tests
 		public void TopicsSubscriptions_Add_Get_Delete_Test()
 		{
 			//Controllers.TopicsControllerTest.GetATopic
-			var user = GetTestUser();
-			var forum = ForumsControllerTest.GetAForum();
-			var topic = TopicsControllerTest.GetATopic(forum);
+            var user = TestData.CreateTestuser();
+            Forum forum = TestData.CreateTestForum(user);
+            Topic topic = TestData.CreateTestTopic(forum, user);
 			var message = new Message(100) 
 			{ 
 				Topic = topic
@@ -133,6 +135,7 @@ namespace NearForums.Tests
 		}
 
 		//Gets an admin user
+        [Obsolete]
 		public static User GetTestUser()
 		{
 			var userService = TestHelper.Resolve<IUsersService>();

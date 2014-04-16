@@ -88,7 +88,7 @@ namespace NearForums.Tests.Controllers
 			Assert.IsInstanceOfType(context.Result, typeof(RedirectResult));
 
 			//Test with user
-			User user = ServicesTests.GetTestUser();
+			User user = TestData.CreateTestuser();
 			sessionItems["User"] = new UserState(user, AuthenticationProvider.Facebook);
 			context.Result = null;
 			att.OnAuthorization(context);

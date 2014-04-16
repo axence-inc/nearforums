@@ -63,8 +63,8 @@ namespace NearForums.DataAccess
 			comm.AddParameter(this.Factory, "ForumName", DbType.String, f.Name);
 			comm.AddParameter(this.Factory, "ForumShortName", DbType.String, f.ShortName);
 			comm.AddParameter(this.Factory, "ForumDescription", DbType.String, f.Description);
-			comm.AddParameter(this.Factory, "CategoryId", DbType.String, f.Category.Id);
-			comm.AddParameter(this.Factory, "UserId", DbType.String, userId);
+			comm.AddParameter(this.Factory, "CategoryId", DbType.Int32, f.Category.Id);
+			comm.AddParameter(this.Factory, "UserId", DbType.Int32, userId);
 			comm.AddParameter(this.Factory, "ReadAccessGroupId", DbType.Int16, f.ReadAccessRole);
 			comm.AddParameter(this.Factory, "PostAccessGroupId", DbType.Int16, f.PostAccessRole);
 
@@ -112,7 +112,7 @@ namespace NearForums.DataAccess
 			comm.AddParameter(this.Factory, "ForumShortName", DbType.String, f.ShortName);
 			comm.AddParameter(this.Factory, "ForumName", DbType.String, f.Name);
 			comm.AddParameter(this.Factory, "ForumDescription", DbType.String, f.Description);
-			comm.AddParameter(this.Factory, "CategoryId", DbType.String, f.Category.Id);
+			comm.AddParameter(this.Factory, "CategoryId", DbType.Int32, f.Category.Id);
 			comm.AddParameter(this.Factory, "UserId", DbType.Int32, userId);
 			comm.AddParameter(this.Factory, "ReadAccessGroupId", DbType.Int16, f.ReadAccessRole);
 			comm.AddParameter(this.Factory, "PostAccessGroupId", DbType.Int16, f.PostAccessRole);

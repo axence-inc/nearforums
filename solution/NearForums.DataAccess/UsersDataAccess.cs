@@ -50,7 +50,7 @@ namespace NearForums.DataAccess
 			var comm = GetCommand("SPUsersBan");
 			comm.AddParameter<int>(this.Factory, "UserId", id);
 			comm.AddParameter<int>(this.Factory, "ModeratorUserId", id);
-			comm.AddParameter<ModeratorReason>(this.Factory, "ModeratorReason", reason);
+			comm.AddParameter<int>(this.Factory, "ModeratorReason", (int)reason);
 			comm.AddParameter<string>(this.Factory, "ModeratorReasonFull", reasonText);
 
 			return comm.SafeExecuteNonQuery() > 0;
@@ -294,7 +294,7 @@ namespace NearForums.DataAccess
 			var comm = GetCommand("SPUsersSuspend");
 			comm.AddParameter<int>(this.Factory, "UserId", id);
 			comm.AddParameter<int>(this.Factory, "ModeratorUserId", id);
-			comm.AddParameter<ModeratorReason>(this.Factory, "ModeratorReason", reason);
+			comm.AddParameter<int>(this.Factory, "ModeratorReason", (int)reason);
 			comm.AddParameter<string>(this.Factory, "ModeratorReasonFull", reasonText);
 			comm.AddParameter<DateTime>(this.Factory, "SuspendedEnd", endDate);
 
@@ -316,7 +316,7 @@ namespace NearForums.DataAccess
 			var comm = GetCommand("SPUsersWarn");
 			comm.AddParameter<int>(this.Factory, "UserId", id);
 			comm.AddParameter<int>(this.Factory, "ModeratorUserId", id);
-			comm.AddParameter<ModeratorReason>(this.Factory, "ModeratorReason", reason);
+			comm.AddParameter<int>(this.Factory, "ModeratorReason", (int)reason);
 			comm.AddParameter<string>(this.Factory, "ModeratorReasonFull", reasonText);
 
 			return comm.SafeExecuteNonQuery() > 0;
@@ -327,7 +327,7 @@ namespace NearForums.DataAccess
 			var comm = GetCommand("SPUsersWarnDismiss");
 			comm.AddParameter<int>(this.Factory, "UserId", id);
 
-			return comm.SafeExecuteNonQuery() > 0;
+			return comm.SafeExecuteAndGetNoOfRowsAffected() > 0;
 		}
 	}
 }

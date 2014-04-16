@@ -13,7 +13,7 @@ namespace NearForums.Tests.Controllers
 	/// Summary description for MessagesControllerTest
 	/// </summary>
 	[TestClass]
-	public class MessagesControllerTest
+	public class MessagesControllerTest : BaseNearforumTest
 	{
 		public MessagesControllerTest()
 		{
@@ -86,8 +86,8 @@ namespace NearForums.Tests.Controllers
 
 			ActionResult result = null;
 
-			Forum forum = ForumsControllerTest.GetAForum();
-			Topic topic = TopicsControllerTest.GetATopic(forum);
+            Forum forum = TestData.CreateTestForum(controller.Session.User.ToUser());
+            Topic topic = TestData.CreateTestTopic(forum, controller.Session.User.ToUser());
 
 			result = controller.Add(topic.Id, topic.ShortName, null);
 			Assert.IsTrue(result is ViewResult);

@@ -18,7 +18,7 @@ namespace NearForums.Tests.Controllers
 	/// Summary description for TopicsControllerTest
 	/// </summary>
 	[TestClass]
-	public class TopicsControllerTest
+	public class TopicsControllerTest : BaseNearforumTest
 	{
 		public TopicsControllerTest()
 		{
@@ -67,6 +67,7 @@ namespace NearForums.Tests.Controllers
 		//
 		#endregion
 
+        [Obsolete]
 		public static Topic GetATopic(Forum forum)
 		{
 			var topicService = TestHelper.Resolve<ITopicsService>();
@@ -88,7 +89,7 @@ namespace NearForums.Tests.Controllers
 			controller.ControllerContext = controllerContext;
 			ActionResult result = null;
 
-			var forum = ForumsControllerTest.GetAForum();
+            Forum forum = TestData.CreateTestForum(controller.Session.User.ToUser());
 
 			result = controller.Add(forum.ShortName, new Topic(), true, "admin@admin.com");
 			Assert.IsFalse(result is RedirectToRouteResult); //controller should display the same page to correct error.
@@ -106,6 +107,7 @@ namespace NearForums.Tests.Controllers
 			controller.ControllerContext = controllerContext;
 			controller.Url = new UrlHelper(controllerContext.RequestContext);
 			result = controller.Add(forum.ShortName, t, true, "admin@admin.com");
+            NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(t);
 			int topicId = t.Id;
 
 			Assert.IsTrue(topicId > 0);
@@ -129,28 +131,33 @@ namespace NearForums.Tests.Controllers
 			controller.ControllerContext = controllerContext;
 			controller.Url = new UrlHelper(controllerContext.RequestContext);
 
-			Forum forum = ForumsControllerTest.GetAForum();
+            //Forum forum = ForumsControllerTest.GetAForum();
+            Forum forum = TestData.CreateTestForum(controller.Session.User.ToUser());
 
-			//Create a valid topic
-			Topic t = new Topic();
-			t.Title = "Unit testing " + TestContext.TestName;
-			t.Description = "This is a sample topic from unit testing project.";
-			t.Tags = new TagList("test");
-			t.ShortName = t.Title.ToUrlSegment(64);
-			t.User = controller.User.ToUser();
-			t.Forum = forum; 
+            Func<Topic> getTopic = new Func<Topic>(() =>
+            {
+                //Create a valid topic
+                Topic topic = new Topic();
+                topic.Title = "Unit testing " + TestContext.TestName;
+                topic.Description = "This is a sample topic from unit testing project.";
+                topic.Tags = new TagList("test");
+                topic.ShortName = topic.Title.ToUrlSegment(64);
+                topic.User = controller.User.ToUser();
+                topic.Forum = forum;
+                return topic;
+            });
 			#endregion
 
-			TagListTestHelper(true, "hola mundo", 2, t, forum.ShortName, controller);
-			TagListTestHelper(true, "hola	mundo", 2, t, forum.ShortName, controller);
-			TagListTestHelper(true, "hola		mundo", 2, t, forum.ShortName, controller);
-			TagListTestHelper(false, "NOTho}la", 1, t, forum.ShortName, controller);
-			TagListTestHelper(true, " tag1 tag2 tag3 tag4 tag5 tag6", 6, t, forum.ShortName, controller);
-			TagListTestHelper(true, "tabbedtag1 	tag2 	tag3 	tag4 	tag5 	tag6 	", 6, t, forum.ShortName, controller);
-			TagListTestHelper(true, "tagdott tag2 tag3 asp.net tag", 5, t, forum.ShortName, controller);
-			TagListTestHelper(false, "NOTtag tag tagtag3 tag4 tag5 tag6 tag7 tag8", 8, t, forum.ShortName, controller);
-			TagListTestHelper(true, "repeated tag tag tag4 tag5 tagthisislong6", 5, t, forum.ShortName, controller);
-			TagListTestHelper(true, "tag tag2 tagtag3 tag4 tag5 tagthis_islmiddlescore--ong6", 6, t, forum.ShortName, controller);
+			TagListTestHelper(true, "hola mundo", 2, getTopic(), forum.ShortName, controller);
+			TagListTestHelper(true, "hola	mundo", 2, getTopic(), forum.ShortName, controller);
+			TagListTestHelper(true, "hola		mundo", 2, getTopic(), forum.ShortName, controller);
+			TagListTestHelper(false, "NOTho}la", 1, getTopic(), forum.ShortName, controller);
+			TagListTestHelper(true, " tag1 tag2 tag3 tag4 tag5 tag6", 6, getTopic(), forum.ShortName, controller);
+			TagListTestHelper(true, "tabbedtag1 	tag2 	tag3 	tag4 	tag5 	tag6 	", 6, getTopic(), forum.ShortName, controller);
+			TagListTestHelper(true, "tagdott tag2 tag3 asp.net tag", 5, getTopic(), forum.ShortName, controller);
+			TagListTestHelper(false, "NOTtag tag tagtag3 tag4 tag5 tag6 tag7 tag8", 8, getTopic(), forum.ShortName, controller);
+			TagListTestHelper(true, "repeated tag tag tag4 tag5 tagthisislong6", 5, getTopic(), forum.ShortName, controller);
+			TagListTestHelper(true, "tag tag2 tagtag3 tag4 tag5 tagthis_islmiddlescore--ong6", 6, getTopic(), forum.ShortName, controller);
 
 		}
 
@@ -175,6 +182,7 @@ namespace NearForums.Tests.Controllers
 				Assert.IsTrue(topicId > 0);
 
 				controller.Delete(topicId, t.ShortName, t.Forum.ShortName);
+                NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(t);
 			}
 			else
 			{
@@ -189,9 +197,9 @@ namespace NearForums.Tests.Controllers
 			controller.ControllerContext = new FakeControllerContext(controller, "http://localhost", null, null, new System.Collections.Specialized.NameValueCollection(), new System.Collections.Specialized.NameValueCollection(), new System.Web.HttpCookieCollection(), ForumsControllerTest.GetSessionWithTestUser());
 			ActionResult result = null;
 
-			Forum forum = ForumsControllerTest.GetAForum();
-			Topic topic = TopicsControllerTest.GetATopic(forum);
-
+            User usr = controller.Session.User.ToUser();
+            Forum forum = TestData.CreateTestForum(usr);
+            Topic topic = TestData.CreateTestTopic(forum, usr);
 
 			result = controller.Edit(topic.Id, topic.ShortName, forum.ShortName, topic, true, "admin@admin.com");
 
@@ -205,8 +213,9 @@ namespace NearForums.Tests.Controllers
 			controller.ControllerContext = new FakeControllerContext(controller, "http://localhost", null, null, new System.Collections.Specialized.NameValueCollection(), new System.Collections.Specialized.NameValueCollection(), new System.Web.HttpCookieCollection(), ForumsControllerTest.GetSessionWithTestUser());
 			var topicService = TestHelper.Resolve<ITopicsService>();
 
-			var forum = ForumsControllerTest.GetAForum();
-			var topic = TopicsControllerTest.GetATopic(forum);
+            User user = controller.Session.User.ToUser();
+            Forum forum = TestData.CreateTestForum(user);
+            Topic topic = TestData.CreateTestTopic(forum, user);
 
 			controller.CloseReplies(topic.Id, topic.ShortName);
 
@@ -227,8 +236,9 @@ namespace NearForums.Tests.Controllers
 			TopicsController controller = TestHelper.Resolve<TopicsController>();
 			controller.ControllerContext = new FakeControllerContext(controller, "http://localhost", null, null, new System.Collections.Specialized.NameValueCollection(), new System.Collections.Specialized.NameValueCollection(), new System.Web.HttpCookieCollection(), ForumsControllerTest.GetSessionWithTestUser());
 
-			Forum forum = ForumsControllerTest.GetAForum();
-			Topic topic = TopicsControllerTest.GetATopic(forum);
+            User user = controller.Session.User.ToUser();
+            Forum forum = TestData.CreateTestForum(user);
+            Topic topic = TestData.CreateTestTopic(forum, user);
 
 			ActionResult result = controller.LatestMessages(topic.Id, topic.ShortName);
 			Assert.IsTrue(controller.ViewData.Model is Topic);

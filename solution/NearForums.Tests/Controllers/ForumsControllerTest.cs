@@ -9,6 +9,7 @@ using NearForums.Web.State;
 using System.Web.Routing;
 using NearForums.Configuration.Routing;
 using NearForums.Web.Extensions;
+using System;
 
 namespace NearForums.Tests
 {
@@ -16,7 +17,7 @@ namespace NearForums.Tests
 	/// Summary description for ForumsControllerTest
 	/// </summary>
 	[TestClass]
-	public class ForumsControllerTest
+	public class ForumsControllerTest : BaseNearforumTest
 	{
 		public ForumsControllerTest()
 		{
@@ -65,6 +66,7 @@ namespace NearForums.Tests
 		//
 		#endregion
 
+        [Obsolete]
 		public static Forum GetAForum()
 		{
 			Forum forum = null;
@@ -99,7 +101,7 @@ namespace NearForums.Tests
 			return forum;
 		}
 
-
+		[Obsolete]
 		public static ForumCategory GetACategory()
 		{
 			var categories = TestHelper.Resolve<IForumsService>().GetCategories();
@@ -113,7 +115,7 @@ namespace NearForums.Tests
 		public static SessionStateItemCollection GetSessionWithTestUser()
 		{
 			SessionStateItemCollection sessionItems = new SessionStateItemCollection();
-			User user = ServicesTests.GetTestUser();
+            User user = TestData.CreateTestuser();
 			sessionItems["User"] = new UserState(user, AuthenticationProvider.Facebook);
 			return sessionItems;
 		}
@@ -123,7 +125,8 @@ namespace NearForums.Tests
 		{
 			var controller = TestHelper.Resolve<ForumsController>();
 			controller.ControllerContext = new FakeControllerContext(controller);
-			Forum forum = GetAForum();
+            User user = TestData.CreateTestuser();
+            Forum forum = TestData.CreateTestForum(user);
 
 			controller.ViewData = new ViewDataDictionary();
 
@@ -141,7 +144,8 @@ namespace NearForums.Tests
 			controller.ControllerContext = new FakeControllerContext(controller);
 			controller.ViewData = new ViewDataDictionary();
 
-			Forum forum = GetAForum();
+            User user = TestData.CreateTestuser();
+            Forum forum = TestData.CreateTestForum(user);
 
 			controller.ListAllUnansweredTopics();
 			Assert.IsNotNull(controller.ViewData.Model);
@@ -163,7 +167,8 @@ namespace NearForums.Tests
 		[TestMethod]
 		public void Forum_Edit()
 		{
-			Forum forum = GetAForum();
+            User user = TestData.CreateTestuser();
+			Forum forum = TestData.CreateTestForum(user);
 			ForumsController controller = TestHelper.Resolve<ForumsController>();
 
 			controller.ControllerContext = new FakeControllerContext(controller, "http://localhost", null, null, new System.Collections.Specialized.NameValueCollection(), new System.Collections.Specialized.NameValueCollection(), new System.Web.HttpCookieCollection(), ForumsControllerTest.GetSessionWithTestUser());
@@ -184,7 +189,9 @@ namespace NearForums.Tests
 
 			forum.Name = "Unit test forum";
 			forum.Description = forum.Name + "... description.";
-			forum.Category = GetACategory();
+            forum.Category = TestData.CreateTestCategory(controller.Session.User.ToUser());
+
+            NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(forum);
 
 			var result = controller.Add(forum);
 			Assert.IsTrue(result is RedirectToRouteResult);
@@ -202,7 +209,9 @@ namespace NearForums.Tests
 
 			forum.Name = "ถ้า";
 			forum.Description = forum.Name + "... description.";
-			forum.Category = GetACategory();
+            forum.Category = TestData.CreateTestCategory(controller.Session.User.ToUser());
+
+            NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(forum);
 
 			var result = controller.Add(forum);
 			Assert.IsTrue(result is RedirectToRouteResult);

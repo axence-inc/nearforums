@@ -48,6 +48,7 @@
     <Compile Include="AdoExtensions.cs" />
     <Compile Include="BaseDataAccess.cs" />
     <Compile Include="CustomAuthenticationDataAccess.cs" />
+    <Compile Include="Configuration\DataAccessConfiguration.cs" />
     <Compile Include="DatabaseSettingsRepository.cs" />
     <Compile Include="ForumCategoriesDataAccess.cs" />
     <Compile Include="ForumsDataAccess.cs" />

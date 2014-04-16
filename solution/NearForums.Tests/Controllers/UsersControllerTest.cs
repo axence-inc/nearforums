@@ -17,7 +17,7 @@ namespace NearForums.Tests.Controllers
 	/// Summary description for UsersControllerTest
 	/// </summary>
 	[TestClass]
-	public class UsersControllerTest
+	public class UsersControllerTest : BaseNearforumTest
 	{
 		public UsersControllerTest()
 		{
@@ -100,7 +100,7 @@ namespace NearForums.Tests.Controllers
 			var controller = TestHelper.Resolve<UsersController>();
 			var context = new FakeControllerContext(controller);
 			var sessionWrapper = new SessionWrapper(context.HttpContext);
-			sessionWrapper.SetUser(ServicesTests.GetTestUser(), AuthenticationProvider.CustomDb);
+            sessionWrapper.SetUser(TestData.CreateTestuser(), AuthenticationProvider.CustomDb);
 			controller.ControllerContext = context;
 			controller.Ban(0, ModeratorReason.Spamming, null);
 			Assert.IsFalse((bool)controller.ViewData.Model);
@@ -131,7 +131,7 @@ namespace NearForums.Tests.Controllers
 			var controller = TestHelper.Resolve<UsersController>();
 			var context = new FakeControllerContext(controller);
 			var sessionWrapper = new SessionWrapper(context.HttpContext);
-			sessionWrapper.SetUser(ServicesTests.GetTestUser(), AuthenticationProvider.CustomDb);
+            sessionWrapper.SetUser(TestData.CreateTestuser(), AuthenticationProvider.CustomDb);
 			controller.ControllerContext = context;
 			controller.Suspend(0, ModeratorReason.Spamming, null);
 			Assert.IsFalse((bool)controller.ViewData.Model);
@@ -143,7 +143,7 @@ namespace NearForums.Tests.Controllers
 			var controller = TestHelper.Resolve<UsersController>();
 			var context = new FakeControllerContext(controller);
 			var sessionWrapper = new SessionWrapper(context.HttpContext);
-			sessionWrapper.SetUser(ServicesTests.GetTestUser(), AuthenticationProvider.CustomDb);
+            sessionWrapper.SetUser(TestData.CreateTestuser(), AuthenticationProvider.CustomDb);
 			controller.ControllerContext = context;
 			controller.Warn(0, ModeratorReason.Spamming, null);
 
@@ -157,7 +157,7 @@ namespace NearForums.Tests.Controllers
 			var controller = TestHelper.Resolve<UsersController>();
 			var context = new FakeControllerContext(controller);
 			var sessionWrapper = new SessionWrapper(context.HttpContext);
-			sessionWrapper.SetUser(ServicesTests.GetTestUser(), AuthenticationProvider.CustomDb);
+            sessionWrapper.SetUser(TestData.CreateTestuser(), AuthenticationProvider.CustomDb);
 			controller.ControllerContext = context;
 			controller.WarnDismiss();
 

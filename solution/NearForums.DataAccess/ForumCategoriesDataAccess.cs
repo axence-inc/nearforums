@@ -55,7 +55,8 @@ namespace NearForums.DataAccess
 			comm.AddParameter<string>(this.Factory, "CategoryName", category.Name);
 			comm.AddParameter<int>(this.Factory, "CategoryOrder", category.Order);
 
-			comm.SafeExecuteNonQuery();
+            DataRow drInserted = this.GetFirstRow(comm);
+            category.Id = (int)drInserted["CategoryId"];
 		}
 
 
@@ -74,7 +75,7 @@ namespace NearForums.DataAccess
 			DbCommand comm = this.GetCommand("SPForumsCategoriesDelete");
 			comm.AddParameter<int>(this.Factory, "CategoryId", id);
 
-			return comm.SafeExecuteNonQuery() > 0;
+            return comm.SafeExecuteAndGetNoOfRowsAffected() > 0;
 		}
 
 		public int GetForumCount(int id)

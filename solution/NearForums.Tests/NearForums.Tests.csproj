@@ -15,8 +15,14 @@
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>True</IsCodedUITest>
     <PublishUrl>http://localhost/NearForums.Tests/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -29,7 +35,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -56,6 +61,9 @@
     <Reference Include="Autofac">
       <HintPath>..\references\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.2.1.1\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\HtmlAgilityPack.dll</HintPath>
@@ -66,23 +74,20 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+    <Reference Include="Mono.Security">
+      <HintPath>..\packages\Npgsql.2.0.11\lib\Net40\Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data">
       <HintPath>..\references\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="mysql.web">
       <HintPath>..\references\mysql.web.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>..\packages\Npgsql.2.0.11\lib\Net40\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="pgProvider">
+      <HintPath>..\packages\pgProvider.1.7\lib\pgProvider.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -115,6 +120,7 @@
     <Compile Include="ConfigurationSettingsTests.cs" />
     <Compile Include="Controllers\ActionFiltersTests.cs" />
     <Compile Include="Controllers\AdminControllerTest.cs" />
+    <Compile Include="BaseNearforumTest.cs" />
     <Compile Include="Controllers\FormsAuthenticationControllerTest.cs" />
     <Compile Include="Controllers\PageContentsControllerTest.cs" />
     <Compile Include="Controllers\MessagesControllerTest.cs" />
@@ -137,6 +143,9 @@
     <Compile Include="Services\SearchServiceTests.cs" />
     <Compile Include="Services\ServicesTests.cs" />
     <Compile Include="HtmlInputTests.cs" />
+    <Compile Include="TestCleanup\Cleaner.CleanerDataAccess.cs" />
+    <Compile Include="TestCleanup\Cleaner.cs" />
+    <Compile Include="TestData.cs" />
     <Compile Include="TestExtensions.cs" />
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
@@ -194,7 +203,25 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

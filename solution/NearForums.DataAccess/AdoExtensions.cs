@@ -230,6 +230,32 @@ namespace NearForums.DataAccess
 			}
 		}
 
+        public static int SafeExecuteAndGetNoOfRowsAffected(this DbCommand comm)
+        {
+            int rowsAffected = -1;
+            Configuration.DataAccessConfiguration config =
+                (Configuration.DataAccessConfiguration)System.Configuration.ConfigurationManager.GetSection("dataAccess");
+
+            if (comm.CommandType != CommandType.StoredProcedure)
+            {
+                rowsAffected = comm.SafeExecuteNonQuery();
+            }
+            else
+            {
+                switch (config.GetRowsAffectedMethod)
+                {
+                    case Configuration.DataAccessConfiguration.GetRowsAffected.ExecuteScalar:
+                        rowsAffected = comm.SafeExecuteScalar<int>();
+                        break;
+                    default:
+                        rowsAffected = comm.SafeExecuteNonQuery();
+                        break;
+                }
+            }
+
+            return rowsAffected;
+        }
+
 		/// <summary>
 		/// Safely opens the connection, executes and closes the connection
 		/// </summary>
@@ -237,17 +263,42 @@ namespace NearForums.DataAccess
 		/// <returns>The number of rows affected.</returns>
 		public static int SafeExecuteNonQuery(this DbCommand comm)
 		{
-			int rowsAffected = 0;
-			try
-			{
-				comm.Connection.Open();
-				rowsAffected = comm.ExecuteNonQuery();
-			}
-			finally
-			{
-				comm.Connection.Close();
-			}
-			return rowsAffected;
+            int rowsAffected = comm.SafeExecute<int>(cmd => cmd.ExecuteNonQuery());
+            
+            return rowsAffected;
 		}
+
+        public static T SafeExecuteScalar<T>(this DbCommand comm)
+        {
+            T t = comm.SafeExecute<T>(cmd => (T)cmd.ExecuteScalar());
+            
+            return t;
+        }
+
+        private static T SafeExecute<T>(this DbCommand comm, Func<DbCommand, T> action)
+        {
+            T result;
+
+            try
+            {
+                if (comm.Connection.State != ConnectionState.Open)
+                {
+                    comm.Connection.Open();
+                }
+
+                result = action(comm);
+            }
+            catch (Exception exc)
+            {
+                comm.Cancel();
+                throw new Exception("Error while executing query", exc);
+            }
+            finally
+            {
+                comm.Connection.Close();
+            }
+
+            return result;
+        }
 	}
 }
