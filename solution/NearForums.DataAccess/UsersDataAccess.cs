@@ -37,7 +37,7 @@ namespace NearForums.DataAccess
 			comm.AddParameter<string>(this.Factory, "UserPhoto", user.Photo);
 			comm.AddParameter<string>(this.Factory, "UserExternalProfileUrl", user.ExternalProfileUrl);
 			comm.AddParameter<string>(this.Factory, "UserProvider", provider.ToString().ToUpper());
-			comm.AddParameter<string>(this.Factory, "UserProviderId", providerId.ToUpper());
+			comm.AddParameter<string>(this.Factory, "UserProviderId", providerId);
 
 			DataRow dr = GetFirstRow(comm);
 			user = ParseUserLoginInfo(dr);
