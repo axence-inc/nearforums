@@ -115,8 +115,15 @@ namespace NearForums.Services
 
 		public void AddVisit(int topicId)
 		{
-			Action<int> handler = new Action<int>(AddVisitSync);
-			handler.BeginInvoke(topicId, null, null);
+            if (Configuration.SiteConfiguration.Current.AllowDbAsyncCalls)
+            {
+                Action<int> handler = new Action<int>(AddVisitSync);
+                handler.BeginInvoke(topicId, null, null);
+            }
+            else
+            {
+                AddVisitSync(topicId);
+            }
 		}
 
 		private void AddVisitSync(int topicId)
