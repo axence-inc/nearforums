@@ -67,7 +67,8 @@ namespace NearForums.Tests
                     using (
                         Lucene.Net.Index.IndexWriter writer = new Lucene.Net.Index.IndexWriter(
                             dir,
-                            null))
+                            null,
+                            Lucene.Net.Index.IndexWriter.MaxFieldLength.UNLIMITED))
                     {
                         writer.DeleteAll();
                         writer.Commit();
