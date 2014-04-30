@@ -15,12 +15,12 @@ using NearForums.Tests.Fakes;
 namespace NearForums.Tests.Controllers
 {
 	[TestClass]
-	public class FormsAuthenticationControllerTest : BaseNearforumTest
+	public class FormsAuthenticationControllerTest
 	{
-
         [TestMethod]
         public void FormsAuthentication_ResetPasswordTest()
         {
+            Assert.Inconclusive("Changing password is possible from Helpdesk only.");
             FormsAuthenticationController controller = TestHelper.Resolve<FormsAuthenticationController>();
             controller.ControllerContext = new FakeControllerContext(controller, "http://localhost/forums/");
             controller.Url = new UrlHelper(controller.ControllerContext.RequestContext);

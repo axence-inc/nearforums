@@ -1,5 +1,4 @@
 ﻿using NearForums.Services;
-using NearForums.Tests.TestCleanup;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,8 +36,6 @@ namespace NearForums.Tests
 
             user = userService.Add(user, provider, providerId);
             
-            Tests.TestCleanup.Cleaner.Instance.AddTestObject(user);
-
             return user;
         }
 
@@ -55,12 +52,11 @@ namespace NearForums.Tests
             {
                 Category = category,
                 Name = "Test forum",
-                ShortName = "test-forum",
+                ShortName = Guid.NewGuid().ToString("N"),
                 Description = "This is a test forum created in " + GetTestName()
             };
 
             TestHelper.Resolve<IForumsService>().Add(forum, forumCreator.Id);
-            Cleaner.Instance.AddTestObject(forum);
 
             return forum;
         }
@@ -73,7 +69,6 @@ namespace NearForums.Tests
             };
 
             TestHelper.Resolve<IForumCategoriesService>().Add(category);
-            Tests.TestCleanup.Cleaner.Instance.AddTestObject(category);
 
             return category;
         }
@@ -89,8 +84,6 @@ namespace NearForums.Tests
                 Tags = new TagList("some new tags"),
             };
 
-            Cleaner.Instance.AddTestObject(topic);
-            
             TestHelper.Resolve<ITopicsService>().Create(topic, "192.168.0.1", user);
 
             return topic;

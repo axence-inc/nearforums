@@ -67,7 +67,7 @@ namespace NearForums.Configuration
 		/// <summary>
 		/// Gets the index file path.
 		/// </summary>
-		public string IndexPath
+		public virtual string IndexPath
 		{
 			get
 			{

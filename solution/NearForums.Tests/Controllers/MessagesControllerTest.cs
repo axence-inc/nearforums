@@ -13,7 +13,7 @@ namespace NearForums.Tests.Controllers
 	/// Summary description for MessagesControllerTest
 	/// </summary>
 	[TestClass]
-	public class MessagesControllerTest : BaseNearforumTest
+	public class MessagesControllerTest
 	{
 		public MessagesControllerTest()
 		{

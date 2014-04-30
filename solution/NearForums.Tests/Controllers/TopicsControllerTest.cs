@@ -18,7 +18,7 @@ namespace NearForums.Tests.Controllers
 	/// Summary description for TopicsControllerTest
 	/// </summary>
 	[TestClass]
-	public class TopicsControllerTest : BaseNearforumTest
+	public class TopicsControllerTest
 	{
 		public TopicsControllerTest()
 		{
@@ -107,7 +107,6 @@ namespace NearForums.Tests.Controllers
 			controller.ControllerContext = controllerContext;
 			controller.Url = new UrlHelper(controllerContext.RequestContext);
 			result = controller.Add(forum.ShortName, t, true, "admin@admin.com");
-            NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(t);
 			int topicId = t.Id;
 
 			Assert.IsTrue(topicId > 0);
@@ -182,7 +181,6 @@ namespace NearForums.Tests.Controllers
 				Assert.IsTrue(topicId > 0);
 
 				controller.Delete(topicId, t.ShortName, t.Forum.ShortName);
-                NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(t);
 			}
 			else
 			{

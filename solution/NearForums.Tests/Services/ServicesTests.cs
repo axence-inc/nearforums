@@ -10,7 +10,7 @@ using NearForums.Configuration;
 namespace NearForums.Tests
 {
 	[TestClass]
-	public class ServicesTests : BaseNearforumTest
+	public class ServicesTests
 	{
 		private TestContext testContextInstance;
 
@@ -62,8 +62,7 @@ namespace NearForums.Tests
 
 			var userService = TestHelper.Resolve<IUsersService>();
 
-            NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(
-                userService.Add(user, AuthenticationProvider.Twitter, providerId));
+            userService.Add(user, AuthenticationProvider.Twitter, providerId);
 
 			user = userService.GetByProviderId(AuthenticationProvider.Twitter, providerId);
 			Assert.IsTrue(user.Id > 0);
@@ -86,9 +85,8 @@ namespace NearForums.Tests
 			user.Website = "http://twitter.com/jorgebg/";
 
 			providerId = "00" + new Random().Next(int.MaxValue / 2, int.MaxValue).ToString();
-;
-            NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(
-                userService.Add(user, AuthenticationProvider.Twitter, providerId));
+
+            userService.Add(user, AuthenticationProvider.Twitter, providerId);
 
 			user = userService.GetByProviderId(AuthenticationProvider.Twitter, providerId);
 			Assert.IsTrue(user.Id > 0);

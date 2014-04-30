@@ -163,7 +163,7 @@ namespace NearForums.Configuration
 		/// Gets or sets the search configuration
 		/// </summary>
 		[ConfigurationProperty("search")]
-		public SearchElement Search
+		public virtual SearchElement Search
 		{
 			get
 			{
@@ -319,5 +319,13 @@ namespace NearForums.Configuration
 			}
 		}
 		#endregion
-	}
+
+        [ConfigurationProperty(ALLOW_DB_ASYNC_CALLS, IsRequired=false, DefaultValue="true")]
+        public bool AllowDbAsyncCalls {
+            get { return (bool)this[ALLOW_DB_ASYNC_CALLS]; }
+            set { this[ALLOW_DB_ASYNC_CALLS] = value; }
+        }
+
+        private const string ALLOW_DB_ASYNC_CALLS = "allowDbAsyncCalls";
+    }
 }

@@ -17,7 +17,7 @@ namespace NearForums.Tests.Controllers
 	/// Summary description for UsersControllerTest
 	/// </summary>
 	[TestClass]
-	public class UsersControllerTest : BaseNearforumTest
+	public class UsersControllerTest
 	{
 		public UsersControllerTest()
 		{

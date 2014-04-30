@@ -17,7 +17,7 @@ namespace NearForums.Tests
 	/// Summary description for ForumsControllerTest
 	/// </summary>
 	[TestClass]
-	public class ForumsControllerTest : BaseNearforumTest
+	public class ForumsControllerTest
 	{
 		public ForumsControllerTest()
 		{
@@ -191,8 +191,6 @@ namespace NearForums.Tests
 			forum.Description = forum.Name + "... description.";
             forum.Category = TestData.CreateTestCategory(controller.Session.User.ToUser());
 
-            NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(forum);
-
 			var result = controller.Add(forum);
 			Assert.IsTrue(result is RedirectToRouteResult);
 
@@ -210,8 +208,6 @@ namespace NearForums.Tests
 			forum.Name = "ถ้า";
 			forum.Description = forum.Name + "... description.";
             forum.Category = TestData.CreateTestCategory(controller.Session.User.ToUser());
-
-            NearForums.Tests.TestCleanup.Cleaner.Instance.AddTestObject(forum);
 
 			var result = controller.Add(forum);
 			Assert.IsTrue(result is RedirectToRouteResult);

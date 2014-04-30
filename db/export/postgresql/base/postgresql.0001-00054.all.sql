@@ -605,8 +605,8 @@ $$ LANGUAGE SQL;
 
 
 
-DROP FUNCTION IF EXISTS public.SPUsersGetTestUser();
-CREATE FUNCTION public.SPUsersGetTestUser() RETURNS SETOF public.Users
+DROP FUNCTION IF EXISTS SPUsersGetTestUser();
+CREATE FUNCTION SPUsersGetTestUser() RETURNS SETOF Users
 	LANGUAGE sql
 AS $$
 	SELECT *
@@ -619,7 +619,7 @@ AS $$
 	LIMIT 1;
 $$;
 
-CREATE OR REPLACE FUNCTION public.SPSettingsGet(key varchar(256)) RETURNS SETOF public.Settings
+CREATE OR REPLACE FUNCTION SPSettingsGet(key varchar(256)) RETURNS SETOF Settings
 	LANGUAGE sql
 	STABLE
 AS $$
@@ -632,7 +632,7 @@ AS $$
 $$;
 
 DROP FUNCTION IF EXISTS SPSETTINGSSET(VARCHAR, TEXT);
-CREATE FUNCTION public.SPSettingsSet(key varchar(256), val TEXT) RETURNS INT
+CREATE FUNCTION SPSettingsSet(key varchar(256), val TEXT) RETURNS INT
 	LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -655,8 +655,8 @@ END;
 $$;
 
 
-DROP FUNCTION IF EXISTS public.SPForumsGetByCategory(smallint);
-CREATE FUNCTION public.SPForumsGetByCategory(
+DROP FUNCTION IF EXISTS SPForumsGetByCategory(smallint);
+CREATE FUNCTION SPForumsGetByCategory(
 		UserGroupId smallint=NULL) 
 	RETURNS TABLE(
 		ForumId int,
@@ -693,8 +693,8 @@ ORDER BY
 	F.ForumOrder
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsGetByForum(int, int, int, int);
-CREATE FUNCTION public.SPTopicsGetByForum(
+DROP FUNCTION IF EXISTS SPTopicsGetByForum(int, int, int, int);
+CREATE FUNCTION SPTopicsGetByForum(
 		ForumId int = 2,
 		StartIndex int = 0,
 		Length int = 10,
@@ -741,7 +741,7 @@ AS $$
 		,T.PostAccessGroupId
 	FROM
 		TopicsComplete T
-		LEFT JOIN public.Messages AS M 
+		LEFT JOIN Messages AS M 
 			ON M.TopicId = T.TopicId AND M.MessageId = T.LastMessageId AND M.Active
 		LEFT JOIN Users AS MU 
 			ON MU.UserId = M.UserId
@@ -751,8 +751,8 @@ AS $$
 	OFFSET SPTopicsGetByForum.StartIndex LIMIT SPTopicsGetByForum.Length
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsGet(int);
-CREATE FUNCTION public.SPTopicsGet(TopicId int=1) 
+DROP FUNCTION IF EXISTS SPTopicsGet(int);
+CREATE FUNCTION SPTopicsGet(TopicId int=1) 
 	RETURNS setof TopicsComplete
 	LANGUAGE sql
 AS $$
@@ -781,8 +781,8 @@ AS $$
 		T.TopicId = SPTopicsGet.TopicId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsGetByShortName(VARCHAR);
-CREATE FUNCTION public.SPForumsGetByShortName(ShortName VARCHAR(32)) 
+DROP FUNCTION IF EXISTS SPForumsGetByShortName(VARCHAR);
+CREATE FUNCTION SPForumsGetByShortName(ShortName VARCHAR(32)) 
 	RETURNS TABLE (
 		ForumId INT,
 		ForumName VARCHAR,
@@ -820,7 +820,7 @@ AS $$
 		AND F.Active
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsUpdate(
+DROP FUNCTION IF EXISTS SPTopicsUpdate(
 	TopicId int, 
 	TopicTitle varchar(256), 
 	TopicDescription text, 
@@ -831,7 +831,7 @@ DROP FUNCTION IF EXISTS public.SPTopicsUpdate(
 	ReadAccessGroupId smallint,
 	PostAccessGroupId smallint);
 	
-CREATE FUNCTION public.SPTopicsUpdate(
+CREATE FUNCTION SPTopicsUpdate(
 		TopicId int, 
 		TopicTitle varchar(256), 
 		TopicDescription text, 
@@ -874,13 +874,13 @@ BEGIN
 		T.TopicId = SPTopicsUpdate.TopicId;
 
 	--Edit tags
-	PERFORM public.SPTagsInsert(TopicTags, TopicId, PreviousTags);
+	PERFORM SPTagsInsert(TopicTags, TopicId, PreviousTags);
 	RETURN 1;
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTagsInsert(VARCHAR, int, varchar);
-CREATE FUNCTION public.SPTagsInsert(Tags VARCHAR(256), TopicId int, PreviousTags varchar(256) = NULL) 
+DROP FUNCTION IF EXISTS SPTagsInsert(VARCHAR, int, varchar);
+CREATE FUNCTION SPTagsInsert(Tags VARCHAR(256), TopicId int, PreviousTags varchar(256) = NULL) 
 	RETURNS INT
 	LANGUAGE plpgsql
 AS $$
@@ -904,8 +904,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsSubscriptionsInsert(int, int);
-CREATE FUNCTION public.SPTopicsSubscriptionsInsert(TopicId int, UserId int) 
+DROP FUNCTION IF EXISTS SPTopicsSubscriptionsInsert(int, int);
+CREATE FUNCTION SPTopicsSubscriptionsInsert(TopicId int, UserId int) 
 	RETURNS int
 	LANGUAGE plpgsql
 AS $$
@@ -925,8 +925,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsCategoriesGetAl();
-CREATE FUNCTION public.SPForumsCategoriesGetAll()
+DROP FUNCTION IF EXISTS SPForumsCategoriesGetAl();
+CREATE FUNCTION SPForumsCategoriesGetAll()
 	RETURNS SETOF ForumsCategories
 	LANGUAGE sql
 AS
@@ -941,8 +941,8 @@ $$
 		CategoryOrder
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsGetUsedShortNames(varchar, varchar);
-CREATE FUNCTION public.SPForumsGetUsedShortNames(ForumShortName varchar(32), SearchShortName varchar(32))
+DROP FUNCTION IF EXISTS SPForumsGetUsedShortNames(varchar, varchar);
+CREATE FUNCTION SPForumsGetUsedShortNames(ForumShortName varchar(32), SearchShortName varchar(32))
 	RETURNS SETOF varchar
 	LANGUAGE plpgsql
 AS $$
@@ -982,8 +982,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsInsert(varchar, varchar, TEXT, int, int, smallint, smallint);
-CREATE FUNCTION public.SPForumsInsert(
+DROP FUNCTION IF EXISTS SPForumsInsert(varchar, varchar, TEXT, int, int, smallint, smallint);
+CREATE FUNCTION SPForumsInsert(
 		ForumName varchar(255),
 		ForumShortName varchar(32),
 		ForumDescription TEXT,
@@ -1030,8 +1030,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsDelete(varchar);
-CREATE FUNCTION public.SPForumsDelete(ForumShortName varchar(32)) 
+DROP FUNCTION IF EXISTS SPForumsDelete(varchar);
+CREATE FUNCTION SPForumsDelete(ForumShortName varchar(32)) 
 	RETURNS INT
 	LANGUAGE plpgsql
 AS $$
@@ -1057,8 +1057,8 @@ $$;
 
 SELECT * FROM SPForumsDelete('unit-test-forum');
 
-DROP FUNCTION IF EXISTS public.SPForumsUpdate(varchar, varchar, text, int, int, smallint, smallint);
-CREATE FUNCTION public.SPForumsUpdate(
+DROP FUNCTION IF EXISTS SPForumsUpdate(varchar, varchar, text, int, int, smallint, smallint);
+CREATE FUNCTION SPForumsUpdate(
 		ForumShortName varchar(32)
 		,ForumName varchar(255)
 		,ForumDescription Text
@@ -1082,8 +1082,8 @@ AS $$
 		ForumShortName = SPForumsUpdate.ForumShortName;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsGetLatest(int);
-CREATE FUNCTION public.SPTopicsGetLatest(
+DROP FUNCTION IF EXISTS SPTopicsGetLatest(int);
+CREATE FUNCTION SPTopicsGetLatest(
 		UserGroupId int = null)
 	RETURNS TABLE(
 		TopicId INT,
@@ -1131,8 +1131,8 @@ AS $$
 	LIMIT 20;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsGetByForumLatest(int, int, int, int);
-CREATE FUNCTION public.SPTopicsGetByForumLatest(
+DROP FUNCTION IF EXISTS SPTopicsGetByForumLatest(int, int, int, int);
+CREATE FUNCTION SPTopicsGetByForumLatest(
 		ForumId int = 2,
 		StartIndex int = 0,
 		Length int = 10,
@@ -1195,8 +1195,8 @@ BEGIN
 END;
 $$;
 	
-DROP FUNCTION IF EXISTS public.SPTagsGetMostViewed(int, bigint);
-CREATE FUNCTION public.SPTagsGetMostViewed(
+DROP FUNCTION IF EXISTS SPTagsGetMostViewed(int, bigint);
+CREATE FUNCTION SPTagsGetMostViewed(
 		ForumId int=2,
 		Top bigint=5)
 	RETURNS TABLE(
@@ -1242,8 +1242,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsInsert(varchar, varchar, TEXT, int, varchar, varchar, int, varchar, smallint, smallint, OUT int);
-CREATE FUNCTION public.SPTopicsInsert (
+DROP FUNCTION IF EXISTS SPTopicsInsert(varchar, varchar, TEXT, int, varchar, varchar, int, varchar, smallint, smallint, OUT int);
+CREATE FUNCTION SPTopicsInsert (
 		TopicTitle varchar(255),
 		TopicShortName varchar(64),
 		TopicDescription TEXT,
@@ -1278,7 +1278,7 @@ BEGIN
 	END IF;
 
 	
-	INSERT INTO public.Topics (
+	INSERT INTO Topics (
 		TopicTitle
 		,TopicShortName
 		,TopicDescription
@@ -1320,17 +1320,17 @@ BEGIN
 	INTO SPTopicsInsert.TopicId;
 
 	--Add tags
-	PERFORM public.SPTagsInsert(Tags:=TopicTags, TopicId:=TopicId);
+	PERFORM SPTagsInsert(Tags:=TopicTags, TopicId:=TopicId);
 
 	--Recount
-	PERFORM public.SPForumsUpdateRecount(ForumId:=ForumId);
+	PERFORM SPForumsUpdateRecount(ForumId:=ForumId);
 
 	return;
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsUpdateRecount(INT);
-CREATE FUNCTION public.SPForumsUpdateRecount(ForumId int)
+DROP FUNCTION IF EXISTS SPForumsUpdateRecount(INT);
+CREATE FUNCTION SPForumsUpdateRecount(ForumId int)
 	RETURNS void
 	LANGUAGE plpgsql
 AS $$
@@ -1361,8 +1361,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsDelete(int, int, varchar);
-CREATE FUNCTION public.SPTopicsDelete(TopicId int, UserId int, Ip varchar (39))
+DROP FUNCTION IF EXISTS SPTopicsDelete(int, int, varchar);
+CREATE FUNCTION SPTopicsDelete(TopicId int, UserId int, Ip varchar (39))
 	RETURNS void
 	LANGUAGE plpgsql
 AS $$
@@ -1386,12 +1386,12 @@ BEGIN
 	WHERE
 		Topics.TopicId = SPTopicsDelete.TopicId;
 
-	PERFORM public.SPForumsUpdateRecount(ForumId);
+	PERFORM SPForumsUpdateRecount(ForumId);
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPUsersWarn(int, int, int, text);
-CREATE FUNCTION public.SPUsersWarn (
+DROP FUNCTION IF EXISTS SPUsersWarn(int, int, int, text);
+CREATE FUNCTION SPUsersWarn (
 		UserId int,
 		ModeratorUserId int,
 		ModeratorReason int,
@@ -1410,8 +1410,8 @@ AS $$
 		UserId = SPUsersWarn.UserId
 $$;
 
-DROP FUNCTION IF EXISTS public.SPUsersDelete(int);
-CREATE FUNCTION public.SPUsersDelete(UserId int)
+DROP FUNCTION IF EXISTS SPUsersDelete(int);
+CREATE FUNCTION SPUsersDelete(UserId int)
 	RETURNS void
 	LANGUAGE sql
 AS $$
@@ -1422,8 +1422,8 @@ AS $$
 		U.UserId = SPUsersDelete.UserId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsGetUnanswered();
-CREATE FUNCTION public.SPTopicsGetUnanswered()
+DROP FUNCTION IF EXISTS SPTopicsGetUnanswered();
+CREATE FUNCTION SPTopicsGetUnanswered()
 	RETURNS TABLE (
 		TopicId int
 		,TopicTitle varchar
@@ -1473,8 +1473,8 @@ AS $$
 		TopicId DESC;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsGetByForumUnanswered(int, int);
-CREATE FUNCTION public.SPTopicsGetByForumUnanswered(
+DROP FUNCTION IF EXISTS SPTopicsGetByForumUnanswered(int, int);
+CREATE FUNCTION SPTopicsGetByForumUnanswered(
 		ForumId int = 2,
 		UserGroupId int = null)
 	RETURNS TABLE(
@@ -1533,8 +1533,8 @@ AS $$
 		TopicViews DESC, TopicId DESC;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPUsersBan (int, int, int, TEXT);
-CREATE FUNCTION public.SPUsersBan (
+DROP FUNCTION IF EXISTS SPUsersBan (int, int, int, TEXT);
+CREATE FUNCTION SPUsersBan (
 		UserId int
 		, ModeratorUserId int
 		, ModeratorReason int
@@ -1552,8 +1552,8 @@ AS $$
 		UserId = @UserId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPUsersGet(int);
-CREATE FUNCTION public.SPUsersGet(
+DROP FUNCTION IF EXISTS SPUsersGet(int);
+CREATE FUNCTION SPUsersGet(
 		UserId int = 11)
 	RETURNS TABLE (
 		UserId INT
@@ -1613,8 +1613,8 @@ AS $$
 		U.UserId = SPUsersGet.UserId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsGetMessagesByUser(int);
-CREATE FUNCTION public.SPTopicsGetMessagesByUser(
+DROP FUNCTION IF EXISTS SPTopicsGetMessagesByUser(int);
+CREATE FUNCTION SPTopicsGetMessagesByUser(
 		UserId int)
 	RETURNS TABLE(
 		TopicId INT
@@ -1657,8 +1657,8 @@ AS $$
 	ORDER BY T.TopicId desc, M.MessageId desc;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPMessagesFlagsGetAll();
-CREATE FUNCTION public.SPMessagesFlagsGetAll()
+DROP FUNCTION IF EXISTS SPMessagesFlagsGetAll();
+CREATE FUNCTION SPMessagesFlagsGetAll()
 	RETURNS TABLE(
 		TopicId INT
 		,MessageId INT
@@ -1710,8 +1710,8 @@ AS $$
 	ORDER BY COUNT(FlagId) DESC, F.TopicId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPPageContentsGetUsedShortNames(varchar, varchar);
-CREATE FUNCTION public.SPPageContentsGetUsedShortNames(
+DROP FUNCTION IF EXISTS SPPageContentsGetUsedShortNames(varchar, varchar);
+CREATE FUNCTION SPPageContentsGetUsedShortNames(
 		PageContentShortName varchar(32), 
 		SearchShortName varchar(32))
 	RETURNS TABLE(
@@ -1742,8 +1742,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPPageContentsInsert(varchar, varchar, TEXT);
-CREATE FUNCTION public.SPPageContentsInsert(
+DROP FUNCTION IF EXISTS SPPageContentsInsert(varchar, varchar, TEXT);
+CREATE FUNCTION SPPageContentsInsert(
 		PageContentShortName varchar(128),
 		PageContentTitle varchar(128),
 		PageContentBody TEXT)
@@ -1762,8 +1762,8 @@ AS $$
 		,now());
 $$;
 
-DROP FUNCTION IF EXISTS public.SPPageContentsUpdate(varchar, varchar, TEXT);
-CREATE FUNCTION public.SPPageContentsUpdate(
+DROP FUNCTION IF EXISTS SPPageContentsUpdate(varchar, varchar, TEXT);
+CREATE FUNCTION SPPageContentsUpdate(
 		PageContentShortName varchar(128),
 		PageContentTitle varchar(128),
 		PageContentBody TEXT)
@@ -1779,8 +1779,8 @@ AS $$
 		PageContentShortName = SPPageContentsUpdate.PageContentShortName;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPPageContentsGet(varchar);
-CREATE FUNCTION public.SPPageContentsGet(
+DROP FUNCTION IF EXISTS SPPageContentsGet(varchar);
+CREATE FUNCTION SPPageContentsGet(
 	PageContentShortName varchar(128)='about')
 	RETURNS TABLE (
 		PageContentId INT
@@ -1795,13 +1795,13 @@ AS $$
 		,pc.PageContentBody
 		,pc.PageContentShortName
 	FROM
-		public.PageContents pc
+		PageContents pc
 	WHERE
 		PageContentShortName = SPPageContentsGet.PageContentShortName;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPPageContentsGetAll();
-CREATE FUNCTION public.SPPageContentsGetAll()
+DROP FUNCTION IF EXISTS SPPageContentsGetAll();
+CREATE FUNCTION SPPageContentsGetAll()
 	RETURNS TABLE (
 		PageContentId INT
 		,PageContentTitle VARCHAR
@@ -1815,13 +1815,13 @@ AS $$
 		,PageContentBody
 		,PageContentShortName
 	FROM
-		public.PageContents
+		PageContents
 	ORDER BY
 		PageContentTitle;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPPageContentsDelete(varchar);
-CREATE FUNCTION public.SPPageContentsDelete(
+DROP FUNCTION IF EXISTS SPPageContentsDelete(varchar);
+CREATE FUNCTION SPPageContentsDelete(
 		PageContentShortName varchar(128))
 	RETURNS void
 	LANGUAGE sql
@@ -1831,8 +1831,8 @@ AS $$
 		PageContentShortName = SPPageContentsDelete.PageContentShortName;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPMessagesGetByTopicFrom(int, int, int);
-CREATE FUNCTION public.SPMessagesGetByTopicFrom(
+DROP FUNCTION IF EXISTS SPMessagesGetByTopicFrom(int, int, int);
+CREATE FUNCTION SPMessagesGetByTopicFrom(
 		TopicId int=1,
 		FirstMsg int=13,
 		Amount int=10)
@@ -1869,14 +1869,14 @@ AS $$
 		,UserRegistrationDate
 		,M.Active
 	FROM 
-		public.MessagesComplete M
+		MessagesComplete M
 	WHERE 
 		M.TopicId = SPMessagesGetByTopicFrom.TopicId
 	OFFSET SPMessagesGetByTopicFrom.FirstMsg LIMIT SPMessagesGetByTopicFrom.Amount;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsGetByUser(int, int);
-CREATE FUNCTION public.SPTopicsGetByUser(
+DROP FUNCTION IF EXISTS SPTopicsGetByUser(int, int);
+CREATE FUNCTION SPTopicsGetByUser(
 		UserId int,
 		UserGroupId int = null)
 	RETURNS TABLE(
@@ -1924,8 +1924,8 @@ AS $$
 	ORDER BY T.TopicId DESC;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTemplatesGetCurrent();
-CREATE FUNCTION public.SPTemplatesGetCurrent()
+DROP FUNCTION IF EXISTS SPTemplatesGetCurrent();
+CREATE FUNCTION SPTemplatesGetCurrent()
 	RETURNS TABLE(
 		TemplateId INT
 		,TemplateKey VARCHAR
@@ -1942,8 +1942,8 @@ AS $$
 		TemplateIsCurrent;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsSubscriptionsDelete(int, int, char);
-CREATE FUNCTION public.SPTopicsSubscriptionsDelete(
+DROP FUNCTION IF EXISTS SPTopicsSubscriptionsDelete(int, int, char);
+CREATE FUNCTION SPTopicsSubscriptionsDelete(
 		TopicId int,
 		UserId int,
 		Userguid char(32))
@@ -1961,8 +1961,8 @@ AS $$
 			AND U.UserGuid = SPTopicsSubscriptionsDelete.UserGuid);
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsGetByRelated(varchar, varchar, varchar, varchar, varchar, varchar, int, int, int);
-CREATE FUNCTION public.SPTopicsGetByRelated(
+DROP FUNCTION IF EXISTS SPTopicsGetByRelated(varchar, varchar, varchar, varchar, varchar, varchar, int, int, int);
+CREATE FUNCTION SPTopicsGetByRelated(
 		Tag1 varchar(50)='problem'
 		,Tag2 varchar(50)='installation'
 		,Tag3 varchar(50)='copy'
@@ -2042,8 +2042,8 @@ AS $$
 	LIMIT SPTopicsGetByRelated.Amount;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsGetByTag(varchar, int, int);
-CREATE FUNCTION public.SPTopicsGetByTag(
+DROP FUNCTION IF EXISTS SPTopicsGetByTag(varchar, int, int);
+CREATE FUNCTION SPTopicsGetByTag(
 		Tag varchar(50)='forum'
 		,ForumId int=2
 		,UserGroupId int = null)
@@ -2099,8 +2099,8 @@ AS $$
 	ORDER BY TopicOrder DESC, TopicViews DESC;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsAddVisit(int);
-CREATE FUNCTION public.SPTopicsAddVisit(
+DROP FUNCTION IF EXISTS SPTopicsAddVisit(int);
+CREATE FUNCTION SPTopicsAddVisit(
 		TopicId int=2)
 	RETURNS void
 	LANGUAGE sql
@@ -2112,8 +2112,8 @@ AS $$
 		TopicId = SPTopicsAddVisit.TopicId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPMessagesFlag(int, int, varchar);
-CREATE FUNCTION public.SPMessagesFlag (
+DROP FUNCTION IF EXISTS SPMessagesFlag(int, int, varchar);
+CREATE FUNCTION SPMessagesFlag (
 		TopicId int=1
 		,MessageId int=1
 		,Ip varchar (39)='127.0.0.1')
@@ -2136,8 +2136,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsCategoriesInsert (varchar, int);
-CREATE FUNCTION public.SPForumsCategoriesInsert(
+DROP FUNCTION IF EXISTS SPForumsCategoriesInsert (varchar, int);
+CREATE FUNCTION SPForumsCategoriesInsert(
 		categoryName varchar(255), 
 		categoryOrder int)
 	RETURNS ForumsCategories
@@ -2155,8 +2155,8 @@ AS $$
 	)returning forumscategories.*;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsCategoriesGet(int);
-CREATE FUNCTION public.SPForumsCategoriesGet(
+DROP FUNCTION IF EXISTS SPForumsCategoriesGet(int);
+CREATE FUNCTION SPForumsCategoriesGet(
 		CategoryId int)
 	RETURNS SETOF ForumsCategories
 	LANGUAGE sql
@@ -2164,8 +2164,8 @@ AS $$
 	SELECT * FROM ForumsCategories WHERE CategoryId = SPForumsCategoriesGet.CategoryId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsCategoriesUpdate(int, varchar, int);
-CREATE FUNCTION public.SPForumsCategoriesUpdate(
+DROP FUNCTION IF EXISTS SPForumsCategoriesUpdate(int, varchar, int);
+CREATE FUNCTION SPForumsCategoriesUpdate(
 		CategoryId int,
 		CategoryName varchar(255),
 		CategoryOrder int)
@@ -2180,8 +2180,8 @@ AS $$
 		CategoryId = SPForumsCategoriesUpdate.CategoryId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsCategoriesGetForumsCountPerCategory(int);
-CREATE FUNCTION public.SPForumsCategoriesGetForumsCountPerCategory(
+DROP FUNCTION IF EXISTS SPForumsCategoriesGetForumsCountPerCategory(int);
+CREATE FUNCTION SPForumsCategoriesGetForumsCountPerCategory(
 		CategoryId int)
 	RETURNS int
 	LANGUAGE sql
@@ -2189,8 +2189,8 @@ AS $$
 	SELECT  count(*)::INT as NoofForums FROM Forums WHERE CategoryId = SPForumsCategoriesGetForumsCountPerCategory.CategoryId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsCategoriesDelete(int);
-CREATE FUNCTION public.SPForumsCategoriesDelete(
+DROP FUNCTION IF EXISTS SPForumsCategoriesDelete(int);
+CREATE FUNCTION SPForumsCategoriesDelete(
 		categoryId int) 
 	RETURNS int
 	LANGUAGE plpgsql
@@ -2215,8 +2215,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsSubscriptionsGetByTopic(int);
-CREATE FUNCTION public.SPTopicsSubscriptionsGetByTopic(
+DROP FUNCTION IF EXISTS SPTopicsSubscriptionsGetByTopic(int);
+CREATE FUNCTION SPTopicsSubscriptionsGetByTopic(
 		TopicId int)
 	RETURNS TABLE(
 		UserId INT
@@ -2246,8 +2246,8 @@ AS $$
 		AND U.UserGroupId >= COALESCE(T.ReadAccessGroupId, -1)
 $$;
 
-DROP FUNCTION IF EXISTS public.SPMessagesInsert(int, text, int, OUT int, varchar, int);
-CREATE FUNCTION public.SPMessagesInsert(
+DROP FUNCTION IF EXISTS SPMessagesInsert(int, text, int, OUT int, varchar, int);
+CREATE FUNCTION SPMessagesInsert(
 		TopicId int
 		,MessageBody TEXT
 		,UserId int
@@ -2301,8 +2301,8 @@ BEGIN
 	END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsUpdateLastMessage(int, int);
-CREATE FUNCTION public.SPTopicsUpdateLastMessage(
+DROP FUNCTION IF EXISTS SPTopicsUpdateLastMessage(int, int);
+CREATE FUNCTION SPTopicsUpdateLastMessage(
 		TopicId int
 		,MessageId int)
 	RETURNS void
@@ -2316,8 +2316,8 @@ AS $$
 		TopicId = SPTopicsUpdateLastMessage.TopicId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPForumsUpdateLastMessage(int, int);
-CREATE FUNCTION public.SPForumsUpdateLastMessage(
+DROP FUNCTION IF EXISTS SPForumsUpdateLastMessage(int, int);
+CREATE FUNCTION SPForumsUpdateLastMessage(
 		TopicId int
 		,MessageId int)
 	RETURNS void
@@ -2334,8 +2334,8 @@ AS $$
 		AND T.TopicId = SPForumsUpdateLastMessage.TopicId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsMove(int, int, int, varchar);
-CREATE FUNCTION public.SPTopicsMove(
+DROP FUNCTION IF EXISTS SPTopicsMove(int, int, int, varchar);
+CREATE FUNCTION SPTopicsMove(
 		TopicId int
 		,ForumId int
 		,UserId int
@@ -2366,8 +2366,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsClose(int, int, varchar);
-CREATE FUNCTION public.SPTopicsClose(
+DROP FUNCTION IF EXISTS SPTopicsClose(int, int, varchar);
+CREATE FUNCTION SPTopicsClose(
 	TopicId int
 	,UserId int
 	,Ip varchar (39))
@@ -2384,8 +2384,8 @@ AS $$
 		TopicId = SPTopicsClose.TopicId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPMessagesFlagsClear(int, int);
-CREATE FUNCTION public.SPMessagesFlagsClear(
+DROP FUNCTION IF EXISTS SPMessagesFlagsClear(int, int);
+CREATE FUNCTION SPMessagesFlagsClear(
 		TopicId int=1
 		,MessageId int=1)
 	RETURNS void
@@ -2398,8 +2398,8 @@ AS $$
 		AND MessageId = SPMessagesFlagsClear.MessageId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPMessagesDelete(int, int, int);
-CREATE FUNCTION public.SPMessagesDelete(
+DROP FUNCTION IF EXISTS SPMessagesDelete(int, int, int);
+CREATE FUNCTION SPMessagesDelete(
 	TopicId int
 	,MessageId int
 	,UserId int)
@@ -2417,8 +2417,8 @@ AS $$
 $$;
 
 
-DROP FUNCTION IF EXISTS public.SPUsersGetAll();
-CREATE FUNCTION public.SPUsersGetAll()
+DROP FUNCTION IF EXISTS SPUsersGetAll();
+CREATE FUNCTION SPUsersGetAll()
 	RETURNS TABLE(
 		UserId INT
 		,UserName VARCHAR
@@ -2454,8 +2454,8 @@ AS $$
 		U.UserName;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPUsersDemote(int);
-CREATE FUNCTION public.SPUsersDemote(
+DROP FUNCTION IF EXISTS SPUsersDemote(int);
+CREATE FUNCTION SPUsersDemote(
 		UserId int)
 	RETURNS void
 	LANGUAGE plpgsql
@@ -2477,8 +2477,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTemplatesGetAll();
-CREATE FUNCTION public.SPTemplatesGetAll()
+DROP FUNCTION IF EXISTS SPTemplatesGetAll();
+CREATE FUNCTION SPTemplatesGetAll()
 	RETURNS TABLE(
 		TemplateId INT
 		,TemplateKey VARCHAR
@@ -2495,8 +2495,8 @@ AS $$
 		Templates
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTemplatesInsert(varchar, varchar, OUT int);
-CREATE FUNCTION public.SPTemplatesInsert(
+DROP FUNCTION IF EXISTS SPTemplatesInsert(varchar, varchar, OUT int);
+CREATE FUNCTION SPTemplatesInsert(
 	TemplateKey varchar(64)
 	,TemplateDescription varchar(256)
 	,OUT TemplateId int)
@@ -2533,8 +2533,8 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTemplatesUpdateCurrent(int);
-CREATE FUNCTION public.SPTemplatesUpdateCurrent(
+DROP FUNCTION IF EXISTS SPTemplatesUpdateCurrent(int);
+CREATE FUNCTION SPTemplatesUpdateCurrent(
 		TemplateId int)
 	RETURNS void
 	LANGUAGE sql
@@ -2545,8 +2545,8 @@ AS $$
 			CASE WHEN TemplateId = SPTemplatesUpdateCurrent.TemplateId THEN TRUE ELSE FALSE END;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTemplatesGet(int);
-CREATE FUNCTION public.SPTemplatesGet(
+DROP FUNCTION IF EXISTS SPTemplatesGet(int);
+CREATE FUNCTION SPTemplatesGet(
 		TemplateId INT)
 	RETURNS TABLE(
 		TemplateId INT
@@ -2566,8 +2566,8 @@ AS $$
 		TemplateId = SPTemplatesGet.TemplateId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTemplatesDelete(int);
-CREATE FUNCTION public.SPTemplatesDelete(
+DROP FUNCTION IF EXISTS SPTemplatesDelete(int);
+CREATE FUNCTION SPTemplatesDelete(
 		TemplateId int)
 	RETURNS void
 	LANGUAGE sql
@@ -2575,8 +2575,8 @@ AS $$
 	DELETE FROM Templates t WHERE t.TemplateId = SPTemplatesDelete.TemplateId;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPTopicsSubscriptionsGetByUser(int);
-CREATE FUNCTION public.SPTopicsSubscriptionsGetByUser(
+DROP FUNCTION IF EXISTS SPTopicsSubscriptionsGetByUser(int);
+CREATE FUNCTION SPTopicsSubscriptionsGetByUser(
 		UserId int=21)
 	RETURNS TABLE (
 		TopicId int,
@@ -2603,8 +2603,8 @@ AS $$
 		S.TopicId DESC;
 $$;
 
-DROP FUNCTION IF EXISTS public.SPMessagesGetByTopicLatest(int);
-CREATE FUNCTION public.SPMessagesGetByTopicLatest(
+DROP FUNCTION IF EXISTS SPMessagesGetByTopicLatest(int);
+CREATE FUNCTION SPMessagesGetByTopicLatest(
 	TopicId int=2)
 	RETURNS TABLE(
 		TopicId int
@@ -2635,7 +2635,7 @@ AS $$
 		,UserGroupName
 		,M.Active
 	FROM 
-		public.MessagesComplete M
+		MessagesComplete M
 	WHERE 
 		M.TopicId = SPMessagesGetByTopicLatest.TopicId
 	ORDER BY
@@ -2643,8 +2643,8 @@ AS $$
 	LIMIT 20;
 $$;
 
-drop FUNCTION IF EXISTS public.SPTopicsOpen(int, int, varchar (39));
-CREATE FUNCTION public.SPTopicsOpen(
+drop FUNCTION IF EXISTS SPTopicsOpen(int, int, varchar (39));
+CREATE FUNCTION SPTopicsOpen(
 		TopicId int
 		,UserId int
 		,Ip varchar (39))
@@ -2661,8 +2661,8 @@ AS $$
 		TopicId = SPTopicsOpen.TopicId
 $$;
 
-DROP function IF EXISTS public.SPUsersSuspend(int, int, int, text, timestamp without time zone );
-CREATE function public.SPUsersSuspend(
+DROP function IF EXISTS SPUsersSuspend(int, int, int, text, timestamp without time zone );
+CREATE function SPUsersSuspend(
 		UserId int
 		, ModeratorUserId int
 		, ModeratorReason int
